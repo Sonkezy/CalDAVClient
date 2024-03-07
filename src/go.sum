@@ -1,8 +1,9 @@
+github.com/emersion/go-ical v0.0.0-20200224201310-cd514449c39e/go.mod h1:4xVTBPcT43a1pp3vdaa+FuRdX5XhKCZPpWv7m0z9ByM=
 github.com/emersion/go-ical v0.0.0-20220601085725-0864dccc089f h1:feGUUxxvOtWVOhTko8Cbmp33a+tU0IMZxMEmnkoAISQ=
 github.com/emersion/go-ical v0.0.0-20220601085725-0864dccc089f/go.mod h1:2MKFUgfNMULRxqZkadG1Vh44we3y5gJAtTBlVsx1BKQ=
-github.com/emersion/go-vcard v0.0.0-20230815062825-8fda7d206ec9/go.mod h1:HMJKR5wlh/ziNp+sHEDV2ltblO4JD2+IdDOWtGcQBTM=
-github.com/emersion/go-webdav v0.5.0 h1:Ak/BQLgAihJt/UxJbCsEXDPxS5Uw4nZzgIMOq3rkKjc=
-github.com/emersion/go-webdav v0.5.0/go.mod h1:ycyIzTelG5pHln4t+Y32/zBvmrM7+mV7x+V+Gx4ZQno=
+github.com/emersion/go-vcard v0.0.0-20191221110513-5f81fa0d3cc7/go.mod h1:HMJKR5wlh/ziNp+sHEDV2ltblO4JD2+IdDOWtGcQBTM=
+github.com/lugamuga/go-webdav v0.1.2 h1:AwRdCfC7UO/8b2u453CZAx0++oYSVyLRlvE3TJOBsmA=
+github.com/lugamuga/go-webdav v0.1.2/go.mod h1:Zj6yEBlna209U8/N1ftf/Qr7iPm9f5q6f7Dtuav7PtE=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/teambition/rrule-go v1.7.2/go.mod h1:mBJ1Ht5uboJ6jexKdNUJg2NcwP8uUMNvStWXlJD3MvU=
