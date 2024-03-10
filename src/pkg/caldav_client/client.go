@@ -2,7 +2,6 @@ package caldavclient
 
 import (
 	"bufio"
-	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -75,8 +74,8 @@ func (c *CaldavClient) GetCalendarsPaths() []string {
 	return calendarPaths
 }
 
-func (c *CaldavClient) GetCalendars(ctx context.Context, name string) ([]EventClient /*[]caldav.CalendarObject  []*ical.Component*/, error) {
-	events, err := c.loadTodayEvents(ctx)
+func (c *CaldavClient) GetCalendars() ([]EventClient, error) {
+	events, err := c.loadTodayEvents()
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +90,6 @@ func (c *CaldavClient) queryCalendarEventsByTimeRange(
 	calendarPath string,
 	start time.Time,
 	end time.Time) ([]caldav.CalendarObject, error) {
-
 	query := &caldav.CalendarQuery{
 		CompFilter: caldav.CompFilter{
 			Name: "VCALENDAR",
@@ -116,12 +114,12 @@ func (c *CaldavClient) GetTodayDateTimes() (time.Time, time.Time) {
 	end := time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, now.Location())
 	return start, end
 }
-func (c *CaldavClient) loadTodayEvents(ctx context.Context) ([]caldav.CalendarObject, error) {
+func (c *CaldavClient) loadTodayEvents() ([]caldav.CalendarObject, error) {
 	start, end := c.GetTodayDateTimes()
 	var events []caldav.CalendarObject
 	paths := c.GetCalendarsPaths()
 	for _, path := range paths {
-		tmpEvents, err := c.LoadEvents(ctx, path, start, end)
+		tmpEvents, err := c.LoadEvents(path, start, end)
 		if err != nil {
 			return nil, err
 		}
@@ -130,7 +128,7 @@ func (c *CaldavClient) loadTodayEvents(ctx context.Context) ([]caldav.CalendarOb
 	return events, nil
 }
 
-func (c *CaldavClient) LoadEvents(ctx context.Context, calendarPath string, start time.Time, end time.Time) ([]caldav.CalendarObject, error) {
+func (c *CaldavClient) LoadEvents(calendarPath string, start time.Time, end time.Time) ([]caldav.CalendarObject, error) {
 	calendarObjects, err := c.queryCalendarEventsByTimeRange(calendarPath, start, end)
 	if calendarObjects == nil {
 		log.Print("Can't get events for calendar "+calendarPath, " ", c.Login, " ", err)
@@ -145,21 +143,22 @@ func (c *CaldavClient) ParseEvents(objects []caldav.CalendarObject) ([]EventClie
 	if err != nil {
 		log.Println(err)
 	}
+	timeLayout := "20060102T150405Z"
 	for _, object := range objects {
-		startTime, err := time.ParseInLocation("20060102T150405Z", (*object.Data).Component.Children[0].Props["DTSTART"][0].Value, timeLocation)
+		startTime, err := time.ParseInLocation(timeLayout, object.Data.Component.Children[0].Props["DTSTART"][0].Value, timeLocation)
 		if err != nil {
 			return nil, err
 		}
-		endTime, err := time.ParseInLocation("20060102T150405Z", (*object.Data).Component.Children[0].Props["DTEND"][0].Value, timeLocation)
+		endTime, err := time.ParseInLocation(timeLayout, object.Data.Component.Children[0].Props["DTEND"][0].Value, timeLocation)
 		if err != nil {
 			return nil, err
 		}
 		var location string
-		if (*object.Data).Component.Children[0].Props["LOCATION"] != nil {
-			location = (*object.Data).Component.Children[0].Props["LOCATION"][0].Value
+		if object.Data.Component.Children[0].Props["LOCATION"] != nil {
+			location = object.Data.Component.Children[0].Props["LOCATION"][0].Value
 		}
 		event := &EventClient{
-			Name:     (*object.Data).Component.Children[0].Props["SUMMARY"][0].Value,
+			Name:     object.Data.Component.Children[0].Props["SUMMARY"][0].Value,
 			Location: location,
 			Start:    startTime,
 			End:      endTime,
@@ -184,14 +183,19 @@ func (c *CaldavClient) OutputEvents(eventsList []EventClient) {
 func (c *CaldavClient) CreateEvent() {
 	newEvent := &EventClient{}
 	fmt.Println("Type event name: ")
-	fmt.Scan(&newEvent.Name)
+	_, err := fmt.Scan(&newEvent.Name)
+	if err != nil {
+		log.Println(err)
+	}
 	fmt.Println("Type location name: ")
-	fmt.Scan(&newEvent.Location)
+	_, err = fmt.Scan(&newEvent.Location)
+	if err != nil {
+		log.Println(err)
+	}
 	fmt.Println("Type event start time (example: 2000-12-31 12:00:00): ")
 	reader := bufio.NewReader(os.Stdin)
 	startTime, _ := reader.ReadString('\n')
 	startTime = startTime[:len(startTime)-1]
-	var err error
 	newEvent.Start, err = time.Parse("2006-01-02 03:04:05", startTime)
 	if err != nil {
 		fmt.Println("Unexpected input ", err)
@@ -222,7 +226,10 @@ func (c *CaldavClient) PutEvent(event EventClient) {
 		fmt.Printf("%d) %s\n", n+1, name)
 	}
 	var calendarNumber int
-	fmt.Scan(&calendarNumber)
+	_, err := fmt.Scan(&calendarNumber)
+	if err != nil {
+		log.Println(err)
+	}
 	calendarNumber--
 	if calendarNumber < 0 || calendarNumber >= len(calendarsPath) {
 		fmt.Println("Wrong number")
@@ -263,7 +270,7 @@ func (c *CaldavClient) PutEvent(event EventClient) {
 		Value: "testN1",
 	})
 	newEvent.Component.Children = append(newEvent.Component.Children, newComponent)
-	_, err := c.PutCalendarObject(c.homeset, newEvent)
+	_, err = c.PutCalendarObject(c.homeset, newEvent)
 	if err != nil {
 		log.Println(err)
 	}
