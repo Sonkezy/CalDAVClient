@@ -11,3 +11,8 @@ build:
 .PHONY: linter
 linter:
 	cd src/; golangci-lint run
+
+.PHONY: test
+test:
+	cd src/; gotestsum
+	cd src/; go test -cover | grep "coverage"
