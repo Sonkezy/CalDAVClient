@@ -4,6 +4,7 @@ go 1.21.6
 
 require (
 	github.com/emersion/go-ical v0.0.0-20220601085725-0864dccc089f
+	github.com/gorilla/mux v1.8.1
 	github.com/lugamuga/go-webdav v0.1.2
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.9.0

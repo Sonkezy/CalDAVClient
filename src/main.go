@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	caldav "mycaldav/pkg/caldav_client"
+	swagger "mycaldav/pkg/swagger"
 	"os"
 	"os/exec"
 )
@@ -29,6 +30,7 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+	go swagger.RunSwagger(client)
 	fmt.Println("Hello")
 	defer resetTerminal()
 ui_loop:

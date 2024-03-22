@@ -1,0 +1,135 @@
+openapi: 3.0.3
+info:
+  title: CalDAV Client
+  version: "0.1.1"
+  description:
+    <h4>Changelist:</h4>
+    <p>0.1.1 - первая версия API</p>
+servers:
+  - url: http://localhost:8080
+    description: Текущий сервер, API управления PASS
+paths:
+  /GetCalendarsNames:
+    get:
+      tags:
+        - CalDAV
+      summary: Метод для получения имен календарей
+      description: Метод позволяет получить имена календарей
+      operationId: GetCalendarsNames
+      responses:
+        '200':
+          description: Успешно получили название календарей
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                enum:
+                  - no-store
+              required: true
+            Pragma:
+              schema:
+                type: string
+                enum:
+                  - no-cache
+              required: true
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                    type: string
+        '404':
+          description: Календари не найдены
+  /GetCalendars:
+    get:
+      tags:
+        - CalDAV
+      summary: Метод для получения событий
+      description: Метод позволяет получить события
+      operationId: GetCalendars
+      responses:
+        '200':
+          description: Успешно получили события
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                enum:
+                  - no-store
+              required: true
+            Pragma:
+              schema:
+                type: string
+                enum:
+                  - no-cache
+              required: true
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                    $ref: '#/components/schemas/Event'
+        '404':
+          description: Календари не найдены
+  /PutEvent:
+    post:
+      tags:
+        - CalDAV
+      summary: Метод для добаления события
+      description: Метод позволяет добавить события
+      operationId: PutEvent
+      requestBody:
+        description: Update an existent pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Event'
+        required: true
+      responses:
+        '200':
+          description: Успешно добавлено событие
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                enum:
+                  - no-store
+              required: true
+            Pragma:
+              schema:
+                type: string
+                enum:
+                  - no-cache
+              required: true
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                    $ref: '#/components/schemas/Event'
+        '404':
+          description: Событие не найдено
+        '422':
+          description: Некорректные данные
+components: 
+  schemas:
+    Event:
+      type: object
+      properties:
+        Name:
+          type: string
+          example: "string"
+        Start:
+          type: string
+          format: date-time
+          example: "2006-01-02T15:04:05Z"
+        End:
+          type: string
+          format: date-time
+          example: "2006-01-02T15:04:05Z"
+        Location:
+          type: string
+          example: "string"

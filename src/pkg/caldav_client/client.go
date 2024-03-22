@@ -24,7 +24,7 @@ type CaldavClient struct {
 }
 
 type EventClient struct {
-	Calendar string
+	сalendar string
 	Name     string
 	Start    time.Time
 	End      time.Time
@@ -172,7 +172,7 @@ func (c *CaldavClient) ParseEvents(objects []caldav.CalendarObject) ([]EventClie
 func (c *CaldavClient) OutputEvents(eventsList []EventClient) {
 	for n, event := range eventsList {
 		fmt.Printf("%d) Name: %s\n", n+1, event.Name)
-		fmt.Printf("----Calendar: %s\n", event.Calendar)
+		//fmt.Printf("----Calendar: %s\n", event.Calendar)
 		fmt.Printf("----Location: %s\n", event.Location)
 		fmt.Printf("----Start time: %s\n", event.Start.Format(time.UnixDate))
 		fmt.Printf("----End time:   %s\n", event.End.Format(time.UnixDate))
@@ -219,7 +219,7 @@ func (c *CaldavClient) CreateEvent() {
 }
 
 func (c *CaldavClient) PutEvent(event EventClient) {
-	calendarsPath := c.GetCalendarsPaths()
+	/*calendarsPath := c.GetCalendarsPaths()
 	calendarsNames := c.GetCalendarsNames()
 	fmt.Println("Select calendar:")
 	for n, name := range calendarsNames {
@@ -234,7 +234,7 @@ func (c *CaldavClient) PutEvent(event EventClient) {
 	if calendarNumber < 0 || calendarNumber >= len(calendarsPath) {
 		fmt.Println("Wrong number")
 		return
-	}
+	}*/
 	newEvent := ical.NewCalendar()
 	newEvent.Component.Props.Add(&ical.Prop{
 		Name:  "PRODID",
@@ -270,7 +270,7 @@ func (c *CaldavClient) PutEvent(event EventClient) {
 		Value: "testN1",
 	})
 	newEvent.Component.Children = append(newEvent.Component.Children, newComponent)
-	_, err = c.PutCalendarObject(c.homeset, newEvent)
+	_, err := c.PutCalendarObject(c.homeset, newEvent)
 	if err != nil {
 		log.Println(err)
 	}
